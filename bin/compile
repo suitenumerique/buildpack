@@ -28,6 +28,7 @@ read_env() {
 # Read environment configuration
 APP_NAME=$(read_env "$ENV_DIR" "LASUITE_APP_NAME" "")
 FRONTEND_DIR=$(read_env "$ENV_DIR" "LASUITE_FRONTEND_DIR" "src/frontend")
+MAIL_DIR=$(read_env "$ENV_DIR" "LASUITE_FRONTEND_DIR" "src/mail")
 BACKEND_DIR=$(read_env "$ENV_DIR" "LASUITE_BACKEND_DIR" "src/backend")
 NGINX_DIR=$(read_env "$ENV_DIR" "LASUITE_NGINX_DIR" "")
 SCRIPT_PRE=$(read_env "$ENV_DIR" "LASUITE_SCRIPT_PRECOMPILE" "")
@@ -83,6 +84,10 @@ if [ ! -z "$SCRIPT_POSTFRONTEND" ]; then
   chmod +x "$SCRIPT_POSTFRONTEND"
   (cd "$BUILD_DIR" && sh -c "$SCRIPT_POSTFRONTEND") 2>&1 | indent
 fi
+
+# Build mails
+echo "-----> Building mails in $MAIL_DIR"
+"$FRONTEND_BUILDPACK_DIR/bin/compile" "$BUILD_DIR/$MAIL_DIR" "$CACHE_DIR/mail" "$ENV_DIR" 2>&1 | indent
 
 # Build backend
 echo "-----> Building backend in $BACKEND_DIR"
